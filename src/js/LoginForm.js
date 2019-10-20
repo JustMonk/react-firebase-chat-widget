@@ -6,6 +6,7 @@ class LoginForm extends React.Component {
    constructor(props) {
       super(props);
       this.authorization = this.authorization.bind(this);
+      this.state = {errors: ""}
    }
 
    componentDidMount() {
@@ -17,8 +18,13 @@ class LoginForm extends React.Component {
       const login = document.querySelector('#chat-login').value;
       const nickname = '123';
 
+      if (login.length < 3) {
+         this.setState({errors: "Имя содержит менее 3 символов"}); 
+         return;
+      }
+
       if (/\$|\#|\[|\]|\.|\/|[\x00-\x1F]|\x7F|\|sep\|/i.test(login+nickname) || (login+nickname).indexOf(" ") != -1) {
-         console.log('bad data. please try again');
+         this.setState({errors: "Некорректные данные"}); 
          return;
       } 
 
@@ -43,6 +49,7 @@ class LoginForm extends React.Component {
                <div className="input">
                   <input type="text" id="chat-login" placeholder="Ваше Имя/Никнейм"></input>
                </div>
+               <div className="error-message">{this.state.errors}</div>
                <div className="input">
                   <button onClick={this.authorization} style={{cursor: 'pointer'}}>Присоединиться</button>
                </div>
