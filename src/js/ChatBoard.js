@@ -23,7 +23,7 @@ class ChatBoard extends React.Component {
    }
 
    sendOnKey(e) {
-         if (e.key == 'Enter') this.sendMessage();
+      if (e.key == 'Enter') this.sendMessage();
    }
 
    sendMessage() {
@@ -37,6 +37,16 @@ class ChatBoard extends React.Component {
          timestamp: Date.now()
       });
       document.getElementById('send-message').value = '';
+   }
+
+   parseMessageTags(message) {
+      const tag = '[allowInnerHtmlMessageSetting=true]';
+
+      if (message.includes(tag)) {
+         return <div dangerouslySetInnerHTML={{ __html: message.replace(tag, '') }}></div> 
+      } else {
+         return <div>{message}</div>
+      }
    }
 
    render() {
@@ -55,12 +65,12 @@ class ChatBoard extends React.Component {
                         else repeat = (this.state.messages[i].name == this.state.messages[i - 1].name) ? true : false;
 
                         return (
-                           <div className={this.props.userData.login + '|sep|' + this.props.userData.nickname == val.name ? "self-message" : "message"}>
+                           <div key={i} className={this.props.userData.login + '|sep|' + this.props.userData.nickname == val.name ? "self-message" : "message"}>
                               <div className="message-content">
                                  {repeat ? "" : <div className="message-name">{val.name.split('|sep|')[0]}</div>}
                                  <div className="text-wrapper">
                                     <div className="text">
-                                       {val.message}
+                                       {this.parseMessageTags(val.message)}
                                        <div className="message-date">{new Date(+val.timestamp).toLocaleDateString({ day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
                                     </div>
                                  </div>
@@ -72,7 +82,7 @@ class ChatBoard extends React.Component {
 
                   </div>
                   <div className="message-input">
-                     <input onFocus={e => {document.addEventListener('keydown', this.sendOnKey)}} onBlur={e => {document.removeEventListener('keydown', this.sendOnKey)}} type="text" id="send-message" placeholder="тут можно написать что угодно"></input>
+                     <input onFocus={e => { document.addEventListener('keydown', this.sendOnKey) }} onBlur={e => { document.removeEventListener('keydown', this.sendOnKey) }} type="text" id="send-message" placeholder="тут можно написать что угодно"></input>
                      <button id="send-button" onClick={this.sendMessage}><i className="fas fa-paper-plane"></i></button>
                   </div>
                </div>
